@@ -1,0 +1,39 @@
+<!DOCTYPE html> <!-- html 문서 시작 선언 -->
+<html lang="ko"> <!-- 한국어 페이지 -->
+    <haed><!-- 화면에 보이지 않는 칸 -->
+        <meta charset="UTF-8"> <!-- 한글 깨지지 않도록 -->
+        <title>입력칸 종류</title> <!-- 브라우저 탭 이름 -->
+    </haed>
+    <body> <!-- 화면에 보이는 칸 -->
+        <h1>입력 type</h1>
+        <form>
+            <label>이메일 : <input type="email", placeholder="메일"></label>
+            <br>
+            <label>비밀번호 : <input type="password", placeholder="비밀번호"></label>
+            <br>
+            <label>동의<input type="checkbox"></label>
+            <br>
+            <label>성별<input type="radio" name="gender">남</label>
+            <label><input type="radio" name="gender">여</label>
+            <br>
+            <input type="date">
+            <br>
+            <textarea>
+               안녕하세요
+            </textarea>
+            <br>
+            <select>
+                <option>성남</option>
+                <option>강릉</option>
+                <option>부산</option>
+            </select>
+            <br>
+            <fieldset>
+            <legend>목록</legend>
+            <label><input type="radio" name="radio" />1번</label>
+            </fieldset>
+            <button>저장</button>
+        </form>
+
+    </body>
+</html>
