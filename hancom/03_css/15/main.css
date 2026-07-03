@@ -1,0 +1,24 @@
+/* 15번 스타일 */
+:root {
+    --main-color: #ec4899;
+    --gep: 12px;
+}
+
+.row {
+    display: flex;
+    gap: var(--gep);
+}
+
+.btn {
+    padding: 8px 18px;
+    border: none;
+    border-radius: 8px;
+    background: var(--main-color);
+    color: #d6d2d2e7;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+body {
+    background-color: orange;
+}

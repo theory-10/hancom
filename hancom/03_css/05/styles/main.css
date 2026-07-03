@@ -1,0 +1,14 @@
+.menu {
+    display: flex;
+    gap: 30px;
+    list-style: none;
+}
+
+/* li 부분 디자인 입히기 */
+.menu li {
+    background-color: rgb(189, 189, 255);
+    border-radius: 5px;
+    color: gray;
+    padding: 15px;
+    font-size: 20px;
+}

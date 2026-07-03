@@ -1,0 +1,45 @@
+@keyframes up {
+    0%, 100% {transform: translateY(0);} /* 시작(0%) | 끋(100%) : 제자리 */
+    50% {transform: translateY(-30px)} /* 중간(50%) : 위로 30px 올라감! (translateY 음수 = 위) */
+}
+
+@keyframes left {
+    0%, 100% {transform: translateX(0);} /* 시작(0%) | 끋(100%) : 제자리 */
+    50% {transform: translateX(-30px)} /* 중간(50%) : 위로 30px 올라감! (translateY 음수 = 위) */
+}
+
+@keyframes right {
+    0%, 100% {transform: translateX(0);} /* 시작(0%) | 끋(100%) : 제자리 */
+    50% {transform: translateX(30px)} /* 중간(50%) : 위로 30px 올라감! (translateY 음수 = 위) */
+}
+
+* {
+    margin: 20%;
+    padding: 10%;
+}
+
+.ball1 {
+    border: 1px solid red;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: gray;
+    animation: up 1.5s linear 1s infinite alternate;
+}
+
+.ball2 {
+    border: 1px solid rgb(12, 104, 197);
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgb(255, 221, 221);
+    animation: left 1.5s linear 1s infinite alternate;
+}
+.ball3 {
+    border: 1px solid rgb(12, 104, 197);
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgb(214, 69, 69);
+    animation: right 1.5s linear 1s infinite alternate;
+}
