@@ -1,0 +1,18 @@
+.box {
+    padding: 100px;
+    background: goldenrod;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.box h1 {
+    color : white
+}
+
+ol li {
+    color: white;
+}
+
+div .text {
+    color: whitesmoke;
+}
