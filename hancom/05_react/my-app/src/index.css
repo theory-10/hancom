@@ -1,111 +1,812 @@
-:root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
-
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
-
-body {
+* {
   margin: 0;
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
+  padding: 0;
   box-sizing: border-box;
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background-color: #f9f7f4;
+  color: #333;
 }
 
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
+/* 네비게이션 */
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #fff;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 40px;
 }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
+.nav-logo {
+  font-size: 20px;
+  font-weight: 700;
+  color: #f28b50;
+  text-decoration: none;
 }
 
-code {
+.nav-links {
+  display: flex;
+  gap: 24px;
+  list-style: none;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #555;
   font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+  transition: color 0.2s;
+}
+
+.nav-links a:hover {
+  color: #f28b50;
+}
+
+/* 공통 */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 100px 20px 60px;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 32px;
+  color: #333;
+}
+
+/* 버튼 */
+.btn {
+  display: inline-block;
+  padding: 12px 28px;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.btn-primary {
+  background: #f28b50;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: #e07a40;
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: #fff;
+  color: #f28b50;
+  border: 2px solid #f28b50;
+}
+
+.btn-secondary:hover {
+  background: #fff5f0;
+}
+
+.btn-danger {
+  background: #ff6b6b;
+  color: #fff;
+  padding: 6px 14px;
+  font-size: 13px;
+}
+
+/* 카드 */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+.card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.card-body {
+  padding: 16px;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.card-sub {
+  font-size: 13px;
+  color: #888;
+}
+
+.card-desc {
+  font-size: 14px;
+  color: #555;
+  margin-top: 8px;
+  line-height: 1.5;
+}
+
+/* 폼 */
+.form-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.form-group input, .form-group select {
+  padding: 10px 14px;
+  border: 1.5px solid #ddd;
+  border-radius: 10px;
+  font-size: 14px;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.form-group select:only-child {
+  width: 100%;
+  max-width: 500px;
+}
+
+.form-group input:focus, .form-group select:focus {
+  border-color: #f28b50;
+}
+
+/* 리스트 */
+.list-item {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.list-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.list-item-title {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.list-item-sub {
+  font-size: 13px;
+  color: #888;
+}
+
+/* 총금액 + 결제 버튼 */
+.total-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.total-row .total-box {
+  margin-top: 0;
+  flex: 1;
+}
+
+.pay-result {
+  margin-top: 12px;
+  padding: 12px 16px;
+  background: #fff5f0;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #f28b50;
+  font-weight: 600;
+}
+
+/* 총금액 */
+.total-box {
+  background: #fff8f4;
+  border: 2px solid #f28b50;
+  border-radius: 14px;
+  padding: 20px 24px;
+  margin-top: 24px;
+  text-align: right;
+  font-size: 18px;
+  font-weight: 700;
+  color: #f28b50;
+}
+
+/* 숙소 선택 카드 */
+.stay-pick-card {
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s, border 0.2s;
+  border: 2px solid transparent;
+}
+
+.stay-pick-card.selected {
+  border: 2px solid #f28b50;
+  box-shadow: 0 0 0 3px rgba(242,139,80,0.2);
+}
+
+/* 섹션 구분선 */
+.section-divider {
+  border: none;
+  border-top: 2px solid #f0ede9;
+  margin: 48px 0;
+}
+
+/* 탭 */
+.tab-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 28px;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 0;
+}
+
+.tab-btn {
+  padding: 10px 24px;
+  border: none;
+  background: none;
+  font-size: 15px;
+  font-weight: 600;
+  color: #aaa;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.tab-btn.active {
+  color: #f28b50;
+  border-bottom: 3px solid #f28b50;
+}
+
+.tab-content.hidden {
+  display: none;
+}
+
+/* 캘린더 */
+.calendar-wrap {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  max-width: 360px;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.calendar-header button {
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: #f28b50;
+  padding: 0 8px;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  text-align: center;
+}
+
+.cal-day-name {
+  font-size: 12px;
+  color: #aaa;
+  padding: 4px 0;
+  font-weight: 600;
+}
+
+.cal-day {
+  font-size: 14px;
+  padding: 8px 4px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.cal-day:hover {
+  background: #fde8d8;
+}
+
+.cal-start, .cal-end {
+  background: #f28b50;
+  color: #fff;
+  font-weight: 700;
+  border-radius: 8px;
+}
+
+.cal-range {
+  background: #fde8d8;
+  border-radius: 0;
+}
+
+.date-range-display {
+  margin-top: 14px;
+  padding: 10px 14px;
+  background: #f9f7f4;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #aaa;
+  text-align: center;
+}
+
+.date-range-display.active {
+  background: #fff5f0;
+  color: #f28b50;
+  font-weight: 700;
+}
+
+/* 별점 */
+.rating {
+  color: #ffc107;
+  font-size: 13px;
+}
+
+/* 메인 배너 */
+.main-banner {
+  text-align: center;
+  padding: 48px 20px 40px;
+  background: linear-gradient(135deg, #fff5ee 0%, #fde8d8 100%);
+  border-radius: 20px;
+  margin-bottom: 40px;
+}
+
+.main-banner h1 {
+  font-size: 32px;
+  font-weight: 800;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.main-banner p {
+  font-size: 16px;
+  color: #777;
+}
+
+/* 지역 섹션 */
+.region-section {
+  margin-bottom: 40px;
+}
+
+.region-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #f28b50;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #fde8d8;
+}
+
+/* 날씨 */
+.weather-card {
+  background: linear-gradient(135deg, #74b9ff, #a29bfe);
+  color: #fff;
+  border-radius: 20px;
+  padding: 32px;
+  text-align: center;
+  max-width: 320px;
+  margin: 0 auto 24px;
+}
+
+.weather-icon {
+  font-size: 64px;
+  margin-bottom: 12px;
+}
+
+.weather-temp {
+  font-size: 48px;
+  font-weight: 800;
+}
+
+.weather-desc {
+  font-size: 18px;
+  margin-top: 8px;
+  opacity: 0.9;
+}
+
+/* 체크리스트 */
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.check-item input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #f28b50;
+  cursor: pointer;
+}
+
+.check-item label {
+  flex: 1;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.check-item label.done {
+  text-decoration: line-through;
+  color: #aaa;
+}
+
+/* 로그인 / 회원가입 */
+.auth-box {
+  max-width: 420px;
+  margin: 60px auto;
+  background: #fff;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+
+.auth-title {
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 28px;
+  text-align: center;
+  color: #333;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.auth-input {
+  padding: 12px 16px;
+  border: 1.5px solid #ddd;
+  border-radius: 10px;
+  font-size: 15px;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.auth-input:focus {
+  border-color: #f28b50;
+}
+
+.auth-error {
+  font-size: 13px;
+  color: #ff6b6b;
+  min-height: 18px;
+  text-align: center;
+}
+
+.auth-divider {
+  text-align: center;
+  font-size: 13px;
+  color: #aaa;
+  margin: 4px 0;
+  position: relative;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 42%;
+  height: 1px;
+  background: #eee;
+}
+
+.auth-divider::before { left: 0; }
+.auth-divider::after  { right: 0; }
+
+.btn-kakao {
+  width: 100%;
+  padding: 12px;
+  background: #FEE500;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #191919;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 0.2s;
+}
+
+.btn-kakao:hover {
+  background: #f0d800;
+}
+
+.auth-link {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+  color: #888;
+}
+
+.auth-link a {
+  color: #f28b50;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* 회원 관리 테이블 */
+.member-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+}
+
+.member-table th {
+  background: #f28b50;
+  color: #fff;
+  padding: 14px 16px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.member-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f0ede9;
+  font-size: 14px;
+  color: #444;
+}
+
+.member-table tr:last-child td {
+  border-bottom: none;
+}
+
+.member-table tr:hover td {
+  background: #fff8f4;
+}
+
+/* 예약 폼 */
+.reserve-form {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  margin-top: 16px;
+}
+
+.reserve-form h3 {
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: #333;
+}
+
+.reserve-result {
+  margin-top: 12px;
+  padding: 12px 16px;
+  background: #fff5f0;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #f28b50;
+  font-weight: 600;
+}
+
+/* 네브바 인증 */
+.nav-auth {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+}
+.nav-auth span { color: #333; font-weight: 600; }
+.nav-auth button {
+  background: none;
+  border: 1px solid #f28b50;
+  color: #f28b50;
+  padding: 4px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+}
+.nav-auth a { color: #f28b50; text-decoration: none; font-size: 14px; }
+
+/* 여행지 배너 */
+.dest-banner {
+  background: linear-gradient(135deg, #f28b50, #e8734a);
+  color: #fff;
+  border-radius: 20px;
+  padding: 40px 32px;
+  margin-bottom: 32px;
+}
+.dest-banner h1 { font-size: 32px; font-weight: 800; margin-bottom: 8px; }
+.dest-banner .dest-region { font-size: 15px; opacity: 0.85; margin-bottom: 8px; }
+.dest-banner .dest-desc { font-size: 15px; opacity: 0.9; }
+
+/* 필터 바 */
+.filter-bar {
+  margin-bottom: 24px;
+}
+.filter-bar select {
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1px solid #e0dbd4;
+  font-size: 15px;
+  min-width: 200px;
+  background: #fff;
+  cursor: pointer;
+}
+
+/* 예약 인라인 폼 */
+.reservation-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 12px;
+  background: #fff8f4;
+  border-radius: 10px;
+}
+.reservation-form input {
+  padding: 8px 12px;
+  border: 1px solid #e0dbd4;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+/* 이용 가능 숙소 */
+.available-stays {
+  margin-top: 32px;
+}
+.available-stays h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: #333;
+}
+
+/* 일정 추가 폼 */
+.schedule-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  margin-bottom: 24px;
+}
+.schedule-form h3 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+.schedule-form input {
+  padding: 10px 14px;
+  border: 1px solid #e0dbd4;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+/* 일정 목록 */
+.schedule-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+
+/* 성공 메시지 */
+.success-msg { color: #4caf50; font-size: 14px; font-weight: 600; }
+
+/* 날짜 범위 표시 */
+.date-range-display {
+  text-align: center;
+  padding: 12px;
+  background: #fff5f0;
+  border-radius: 10px;
+  font-size: 15px;
+  color: #f28b50;
+  font-weight: 600;
+  margin: 12px 0;
+}
+
+/* 체크리스트 폼 */
+.checklist-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.checklist-form input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid #e0dbd4;
+  border-radius: 10px;
+  font-size: 15px;
+}
+
+/* 카카오 로그인 버튼 */
+.kakao-btn {
+  width: 100%;
+  padding: 12px;
+  background: #FEE500;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #191919;
+  cursor: pointer;
+  margin-bottom: 8px;
+}
+.kakao-btn:hover { background: #f0d800; }
+
+/* 날씨 카드 */
+.weather-card {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+  padding: 40px;
+  text-align: center;
+  max-width: 400px;
+  margin: 24px auto;
+}
+.weather-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 16px; color: #333; }
+.weather-icon { font-size: 64px; margin-bottom: 12px; }
+.weather-temp { font-size: 48px; font-weight: 800; color: #f28b50; }
+.weather-desc { font-size: 18px; color: #666; margin-top: 8px; }
+.weather-humidity { font-size: 15px; color: #888; margin-top: 8px; }
+
+/* 카페 랭킹 카드 */
+.cafe-rank-card {
+  position: relative;
+}
+.cafe-rank-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 28px;
+  z-index: 1;
+}
+.cafe-rank-num {
+  font-size: 12px;
+  font-weight: 700;
+  color: #f28b50;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* navAuth 영역 */
+#navAuth {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
