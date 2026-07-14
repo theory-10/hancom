@@ -1,0 +1,105 @@
+/* 전체 페이지 기본 스타일 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* 전체 채팅 컨테이너 */
+.container {
+    background-color: #fff;
+    width: 45vw;
+    height: 70vh;
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+}
+
+h1 {
+    text-align: center;
+    font-size: 2rem;
+    color: #333;
+}
+
+/* 채팅 메시지 표시 영역 */
+.chat-box {
+    flex: 1;
+    overflow-y: auto;
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background-color: #fafafa;
+}
+
+/* 사용자 메시지 */
+.user-msg {
+    align-self: flex-end;
+    background-color: #4a90e2;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 16px;
+    max-width: 70%;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+/* AI 메시지 */
+.ai-msg {
+    align-self: flex-start;
+    background-color: #e8e8e8;
+    color: #333;
+    padding: 8px 16px;
+    border-radius: 16px;
+    max-width: 70%;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+/* 입력창 및 버튼 영역 */
+.input-area {
+    display: flex;
+    gap: 8px;
+}
+
+input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.95rem;
+}
+
+input:focus {
+    outline: none;
+    border-color: #4a90e2;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #4a90e2;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: bold;
+}
+
+button:hover {
+    background-color: #357abd;
+}
