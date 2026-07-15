@@ -1,5 +1,5 @@
 {
-  "name": "server",
+  "name": "06_node_express",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -11,8 +11,6 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "cors": "^2.8.6",
-    "dotenv": "^17.4.2",
     "express": "^5.2.1"
   }
 }

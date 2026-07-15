@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>박진반 배치도</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .top-btn {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr) 60px repeat(3, 1fr);
+            gap: 12px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .spacer {
+            background: transparent;
+        }
+        .card.empty {
+            background: #eee;
+            border: 1px dashed #bbb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .empty-text {
+            color: #aaa;
+            font-size: 14px;
+        }
+        .card {
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 16px;
+            text-align: center;
+            background: #f9f9f9;
+        }
+        .name {
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #333;
+        }
+        .name:hover {
+            color: #0066cc;
+            text-decoration: underline;
+        }
+        .id {
+            font-size: 12px;
+            color: #999;
+            margin: 4px 0 8px;
+        }
+        .add-btn {
+            background: #0066cc;
+            color: white;
+            padding: 8px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+        .add-btn:hover {
+            background: #0044aa;
+        }
+    </style>
+</head>
+<body>
+    <h1>배치도</h1>
+    <br><br>
+
+    <div class="grid" id="grid"></div>
+
+    <script>
+        const BASE = 'http://192.168.10.28:5000/hancom/박진/users'
+        const HEADERS = { 'Content-Type': 'application/json', Authorization: 'HANCOM' }
+
+        async function getStudents() {
+            const res = await fetch(BASE, { headers: HEADERS })
+            const students = await res.json()
+            renderGrid(students)
+        }
+
+        const 반인원 = ['강성원','강하영','김정아','김정현','김해냄','김효인','박진','안치호','양하은','유민성','이도연','이현우','임소정','전욱진','정기준','정선민','정유진','표후동','한유진','한윤지']
+
+        function renderGrid(students) {
+            students = students.filter(s => 반인원.includes(s.name))
+            const grid = document.getElementById('grid')
+
+            // 공석 위치 (0-indexed): 1번=0, 6번=5, 16번=15, 19번=18
+            const 공석 = new Set([0, 5, 15, 18])
+
+            // 고정 자리 (0-indexed)
+            const 고정 = {
+                1: '한유진',   // 2번
+                2: '한윤지',   // 3번
+                3: '김정아',   // 4번
+                4: '김정현',   // 5번
+                6: '이도연',   // 7번
+                7: '강하영',   // 8번
+                8: '정유진',   // 9번
+                9: '김해냄',   // 10번
+                10: '정기준',  // 11번
+                11: '표후동',  // 12번
+                12: '정선민',  // 13번
+                13: '양하은',  // 14번
+                14: '유민성',  // 15번
+                16: '전욱진',  // 17번
+                17: '이현우',  // 18번
+                19: '박진',    // 20번
+                20: '김효인',  // 21번
+                21: '강성원',  // 22번
+                22: '임소정',  // 23번
+                23: '안치호'   // 24번
+            }
+            const 고정이름 = new Set(Object.values(고정))
+            const 나머지 = students.filter(s => !고정이름.has(s.name))
+
+            const padded = new Array(24).fill(null)
+
+            // 고정 학생 배치
+            Object.entries(고정).forEach(([idx, name]) => {
+                padded[Number(idx)] = students.find(s => s.name === name) || null
+            })
+
+            // 나머지 학생들을 빈 자리에 순서대로 배치
+            let si = 0
+            for (let i = 0; i < 24; i++) {
+                if (!공석.has(i) && padded[i] === null) {
+                    padded[i] = 나머지[si++] || null
+                }
+            }
+            grid.innerHTML = padded.map((s, i) => {
+                const card = s
+                    ? `<div class="card">
+                        <div class="name" onclick="editStudent(${s.id}, '${s.name}')">${s.name}</div>
+                        <div class="id">id: ${s.id}</div>
+                       </div>`
+                    : `<div class="card empty"><div class="empty-text">공석</div></div>`
+                const spacer = i % 6 === 2 ? '<div class="spacer"></div>' : ''
+                return card + spacer
+            }).join('')
+        }
+
+        async function editStudent(id, currentName) {
+            const newName = prompt('새 이름 입력:', currentName)
+            if (!newName) return
+            await fetch(`${BASE}/${id}`, {
+                method: 'PUT',
+                headers: HEADERS,
+                body: JSON.stringify({ name: newName })
+            })
+            getStudents()
+        }
+
+        async function deleteStudent(id) {
+            if (!confirm('삭제할까요?')) return
+            await fetch(`${BASE}/${id}`, { method: 'DELETE', headers: HEADERS })
+            getStudents()
+        }
+
+        async function addStudent() {
+            const name = prompt('추가할 학생 이름:')
+            if (!name) return
+            await fetch(BASE, {
+                method: 'POST',
+                headers: HEADERS,
+                body: JSON.stringify({ name })
+            })
+            getStudents()
+        }
+
+        getStudents()
+    </script>
+</body>
+</html>
