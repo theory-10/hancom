@@ -6,7 +6,7 @@
 
 body {
     font-family: 'Segoe UI', Arial, sans-serif;
-    background-color: #f9f8f5;
+    background-color: #f2f2f2;
     color: #1a1a1a;
     display: flex;
     height: 100vh;
@@ -16,7 +16,7 @@ body {
 /* 사이드바 */
 .sidebar {
     width: 260px;
-    background-color: #f0ede6;
+    background-color: #e6e6e6;
     border-right: 1px solid #e0ddd6;
     display: flex;
     flex-direction: column;
