@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>계산기</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" rel="stylesheet">
+  <style>
+    /* SEED Design Color & Spacing Tokens */
+    :root {
+      --bg-default:       oklch(1.000 0.000 0);
+      --bg-layer:         oklch(0.979 0.002 248);
+      --bg-brand-weak:    oklch(0.970 0.016 47);
+      --bg-brand-solid:   oklch(0.696 0.204 43);
+      --bg-brand-pressed: oklch(0.618 0.195 40);
+      --fg-neutral:       oklch(0.226 0.008 264);
+      --fg-muted:         oklch(0.636 0.015 262);
+      --fg-brand:         oklch(0.618 0.195 40);
+      --stroke-muted:     oklch(0.901 0.007 269);
+      --critical:         oklch(0.640 0.233 28);
+
+      --gray-200: oklch(0.967 0.002 248);
+      --gray-300: oklch(0.952 0.003 265);
+      --gray-400: oklch(0.901 0.007 269);
+      --gray-500: oklch(0.867 0.007 269);
+      --gray-600: oklch(0.766 0.010 267);
+      --carrot-200: oklch(0.946 0.031 52);
+
+      --x2: 8px;
+      --x3: 12px;
+      --x4: 16px;
+      --x5: 20px;
+      --x6: 24px;
+      --global-gutter: 16px;
+
+      --r6:   24px;
+      --full: 9999px;
+
+      --font-family-ui: "Pretendard Variable", -apple-system, BlinkMacSystemFont,
+        "Apple SD Gothic Neo", "Segoe UI", Roboto, "Helvetica Neue", Arial,
+        "Noto Sans", sans-serif;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font-family-ui);
+      background-color: var(--bg-layer);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--global-gutter);
+    }
+
+    /* ── Card ── */
+    .calculator {
+      background-color: var(--bg-default);
+      border-radius: var(--r6);
+      padding: var(--x6);
+      width: 100%;
+      max-width: 360px;
+      box-shadow:
+        0 1px 3px oklch(0.226 0.008 264 / 0.06),
+        0 4px 20px oklch(0.226 0.008 264 / 0.08);
+    }
+
+    /* ── Display ── */
+    .display {
+      padding: var(--x3) var(--x2) var(--x5);
+      text-align: right;
+      min-height: 130px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      gap: var(--x2);
+    }
+
+    .display__expr {
+      font-size: 0.875rem;
+      line-height: 1.25rem;
+      font-weight: 400;
+      color: var(--fg-muted);
+      min-height: 1.25rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .display__value {
+      font-size: 2.75rem;
+      line-height: 1.15;
+      font-weight: 700;
+      color: var(--fg-neutral);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      transition: font-size 0.1s;
+    }
+
+    /* ── Divider ── */
+    .divider {
+      height: 1px;
+      background-color: var(--stroke-muted);
+      margin-bottom: var(--x5);
+    }
+
+    /* ── Button Grid ── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--x2);
+    }
+
+    .btn {
+      border: none;
+      cursor: pointer;
+      font-family: var(--font-family-ui);
+      font-size: 1.125rem;
+      font-weight: 500;
+      line-height: 1;
+      border-radius: var(--full);
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.12s ease, transform 0.08s ease;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      outline: none;
+    }
+
+    .btn:focus-visible {
+      box-shadow: 0 0 0 3px var(--bg-brand-weak);
+    }
+
+    .btn:active { transform: scale(0.95); }
+
+    /* number */
+    .btn--num {
+      background-color: var(--gray-200);
+      color: var(--fg-neutral);
+    }
+    .btn--num:hover  { background-color: var(--gray-300); }
+    .btn--num:active { background-color: var(--gray-400); }
+
+    /* function (AC, +/−, %) */
+    .btn--fn {
+      background-color: var(--gray-400);
+      color: var(--fg-neutral);
+      font-size: 1rem;
+    }
+    .btn--fn:hover  { background-color: var(--gray-500); }
+    .btn--fn:active { background-color: var(--gray-600); color: var(--bg-default); }
+
+    /* operator */
+    .btn--op {
+      background-color: var(--bg-brand-weak);
+      color: var(--fg-brand);
+      font-size: 1.375rem;
+      font-weight: 600;
+    }
+    .btn--op:hover   { background-color: var(--carrot-200); }
+    .btn--op:active  { background-color: var(--carrot-200); }
+    .btn--op.is-active {
+      background-color: var(--bg-brand-solid);
+      color: var(--bg-default);
+    }
+
+    /* equals */
+    .btn--eq {
+      background-color: var(--bg-brand-solid);
+      color: var(--bg-default);
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+    .btn--eq:hover  { background-color: oklch(0.660 0.202 43); }
+    .btn--eq:active { background-color: var(--bg-brand-pressed); }
+
+    /* zero (wide) */
+    .btn--wide {
+      grid-column: span 2;
+      justify-content: flex-start;
+      padding-left: 26px;
+    }
+
+    /* error state */
+    .display__value.is-error { color: var(--critical); }
+  </style>
+</head>
+<body>
+
+<div class="calculator" role="application" aria-label="계산기">
+
+  <!-- Display -->
+  <div class="display" aria-live="polite">
+    <div class="display__expr"  id="expr"></div>
+    <div class="display__value" id="value">0</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Buttons -->
+  <div class="grid">
+    <!-- row 1 -->
+    <button class="btn btn--fn"  data-action="clear">AC</button>
+    <button class="btn btn--fn"  data-action="sign">+/−</button>
+    <button class="btn btn--fn"  data-action="percent">%</button>
+    <button class="btn btn--op"  data-action="op" data-op="÷">÷</button>
+
+    <!-- row 2 -->
+    <button class="btn btn--num" data-action="num" data-val="7">7</button>
+    <button class="btn btn--num" data-action="num" data-val="8">8</button>
+    <button class="btn btn--num" data-action="num" data-val="9">9</button>
+    <button class="btn btn--op"  data-action="op" data-op="×">×</button>
+
+    <!-- row 3 -->
+    <button class="btn btn--num" data-action="num" data-val="4">4</button>
+    <button class="btn btn--num" data-action="num" data-val="5">5</button>
+    <button class="btn btn--num" data-action="num" data-val="6">6</button>
+    <button class="btn btn--op"  data-action="op" data-op="−">−</button>
+
+    <!-- row 4 -->
+    <button class="btn btn--num" data-action="num" data-val="1">1</button>
+    <button class="btn btn--num" data-action="num" data-val="2">2</button>
+    <button class="btn btn--num" data-action="num" data-val="3">3</button>
+    <button class="btn btn--op"  data-action="op" data-op="+">+</button>
+
+    <!-- row 5 -->
+    <button class="btn btn--num btn--wide" data-action="num" data-val="0">0</button>
+    <button class="btn btn--num" data-action="dot">.</button>
+    <button class="btn btn--eq"  data-action="eq">=</button>
+  </div>
+
+</div>
+
+<script>
+  const exprEl  = document.getElementById('expr');
+  const valueEl = document.getElementById('value');
+  const clearBtn = document.querySelector('[data-action="clear"]');
+  const opBtns   = document.querySelectorAll('[data-action="op"]');
+
+  let cur      = '0';
+  let prev     = '';
+  let op       = null;
+  let expr     = '';
+  let resetNext = false;
+
+  /* ── core ops ── */
+  function compute(a, b, o) {
+    a = parseFloat(a); b = parseFloat(b);
+    switch (o) {
+      case '+': return a + b;
+      case '−': return a - b;
+      case '×': return a * b;
+      case '÷': return b === 0 ? null : a / b;
+    }
+  }
+
+  function round(n) { return Math.round(n * 1e10) / 1e10; }
+
+  function fmt(s) {
+    if (s === 'Error') return 'Error';
+    const n = parseFloat(s);
+    if (isNaN(n)) return s;
+    const hasDecimal = s.includes('.');
+    const decimals   = hasDecimal ? s.split('.')[1].replace(/0+$/, '') : '';
+    if (hasDecimal && s.endsWith('.')) return n.toLocaleString('ko-KR') + '.';
+    if (decimals)
+      return n.toLocaleString('ko-KR', { minimumFractionDigits: decimals.length, maximumFractionDigits: decimals.length });
+    return n.toLocaleString('ko-KR');
+  }
+
+  /* ── actions ── */
+  function pushNum(d) {
+    if (resetNext) { cur = d; resetNext = false; }
+    else if (cur === '0') cur = d;
+    else if (cur.replace('-','').replace('.','').length < 12) cur += d;
+  }
+
+  function pushDot() {
+    if (resetNext) { cur = '0.'; resetNext = false; return; }
+    if (!cur.includes('.')) cur += '.';
+  }
+
+  function pushOp(o) {
+    if (op && !resetNext) {
+      const r = compute(prev, cur, op);
+      cur = r === null ? 'Error' : round(r).toString();
+    }
+    prev = cur; op = o;
+    expr = fmt(cur) + ' ' + o;
+    resetNext = true;
+    highlightOp(o);
+  }
+
+  function equals() {
+    if (!op || !prev) return;
+    const r = compute(prev, cur, op);
+    expr = fmt(prev) + ' ' + op + ' ' + fmt(cur) + ' =';
+    cur  = r === null ? 'Error' : round(r).toString();
+    prev = ''; op = null; resetNext = true;
+    clearOpHighlight();
+  }
+
+  function clear() {
+    cur = '0'; prev = ''; op = null; expr = ''; resetNext = false;
+    clearOpHighlight();
+  }
+
+  function sign() {
+    if (cur === '0' || cur === 'Error') return;
+    cur = cur.startsWith('-') ? cur.slice(1) : '-' + cur;
+  }
+
+  function percent() {
+    if (cur === 'Error') return;
+    cur = (parseFloat(cur) / 100).toString();
+  }
+
+  /* ── display ── */
+  function render() {
+    exprEl.textContent = expr;
+
+    const display = fmt(cur);
+    valueEl.textContent = display;
+    valueEl.classList.toggle('is-error', cur === 'Error');
+
+    const len = display.length;
+    valueEl.style.fontSize =
+      len > 14 ? '1.5rem' :
+      len > 11 ? '2rem'   :
+      len > 8  ? '2.25rem': '2.75rem';
+
+    clearBtn.textContent = (cur !== '0' || expr) ? 'C' : 'AC';
+  }
+
+  function highlightOp(active) {
+    opBtns.forEach(b => b.classList.toggle('is-active', b.dataset.op === active));
+  }
+
+  function clearOpHighlight() {
+    opBtns.forEach(b => b.classList.remove('is-active'));
+  }
+
+  /* ── events ── */
+  document.querySelectorAll('.btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const a = btn.dataset.action;
+      if (a === 'num')     pushNum(btn.dataset.val);
+      else if (a === 'op') pushOp(btn.dataset.op);
+      else if (a === 'eq') equals();
+      else if (a === 'clear')   clear();
+      else if (a === 'sign')    sign();
+      else if (a === 'percent') percent();
+      else if (a === 'dot')     pushDot();
+      render();
+    });
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key >= '0' && e.key <= '9') { pushNum(e.key); }
+    else if (e.key === '.') { pushDot(); }
+    else if (e.key === '+') { pushOp('+'); }
+    else if (e.key === '-') { pushOp('−'); }
+    else if (e.key === '*') { pushOp('×'); }
+    else if (e.key === '/') { e.preventDefault(); pushOp('÷'); }
+    else if (e.key === '%') { percent(); }
+    else if (e.key === 'Enter' || e.key === '=') { equals(); }
+    else if (e.key === 'Escape') { clear(); }
+    else if (e.key === 'Backspace') {
+      if (cur.length > 1 && cur !== 'Error') cur = cur.slice(0, -1);
+      else cur = '0';
+    }
+    else return;
+    render();
+  });
+
+  render();
+</script>
+</body>
+</html>

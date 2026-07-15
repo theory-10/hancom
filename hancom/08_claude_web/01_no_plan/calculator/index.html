@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>계산기</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f5f0e8;
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      overflow: hidden;
+    }
+
+    /* 배경 빛 효과 */
+    body::before,
+    body::after {
+      content: '';
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.3;
+      pointer-events: none;
+    }
+    body::before {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, #e8d5b0, transparent 70%);
+      top: -100px;
+      left: -100px;
+    }
+    body::after {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, #d4c5a0, transparent 70%);
+      bottom: -80px;
+      right: -80px;
+    }
+
+    .calculator {
+      position: relative;
+      width: 340px;
+      background: #d6d6d6;
+      border-radius: 28px;
+      padding: 28px 24px 24px;
+      box-shadow:
+        0 24px 60px rgba(0, 0, 0, 0.18),
+        0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* 디스플레이 */
+    .display {
+      background: #ebebeb;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: 18px;
+      padding: 20px 20px 16px;
+      margin-bottom: 24px;
+      text-align: right;
+      min-height: 100px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      gap: 6px;
+      overflow: hidden;
+    }
+
+    .expression {
+      color: rgba(0, 0, 0, 0.35);
+      font-size: 13px;
+      font-weight: 400;
+      min-height: 18px;
+      word-break: break-all;
+      letter-spacing: 0.3px;
+      transition: opacity 0.2s;
+    }
+
+    .result {
+      color: #111111;
+      font-size: 40px;
+      font-weight: 300;
+      word-break: break-all;
+      line-height: 1;
+      letter-spacing: -1px;
+      transition: font-size 0.1s;
+    }
+
+    .result.small {
+      font-size: 28px;
+    }
+
+    /* 버튼 그리드 */
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    button {
+      border: none;
+      border-radius: 14px;
+      font-family: inherit;
+      font-size: 18px;
+      font-weight: 500;
+      height: 68px;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.1s, background 0.15s;
+      outline: none;
+      position: relative;
+      overflow: hidden;
+      letter-spacing: -0.3px;
+    }
+
+    /* 리플 효과 */
+    button .ripple {
+      position: absolute;
+      border-radius: 50%;
+      transform: scale(0);
+      animation: ripple 0.4s linear;
+      background: rgba(0, 0, 0, 0.12);
+      pointer-events: none;
+    }
+
+    @keyframes ripple {
+      to { transform: scale(4); opacity: 0; }
+    }
+
+    button:active {
+      transform: scale(0.94);
+    }
+
+    /* 숫자 버튼 */
+    .btn-num {
+      background: #e8e8e8;
+      color: #111111;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-num:hover {
+      background: #f0f0f0;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+    }
+
+    /* 연산자 버튼 */
+    .btn-op {
+      background: #c0c0c0;
+      color: #111111;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-op:hover {
+      background: #b0b0b0;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    /* AC / 삭제 버튼 */
+    .btn-clear {
+      background: #b8b8b8;
+      color: #111111;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      font-size: 15px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-clear:hover {
+      background: #e05555;
+      color: #ffffff;
+      border-color: transparent;
+    }
+
+    /* = 버튼 */
+    .btn-eq {
+      background: #444444;
+      color: #ffffff;
+      border: none;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+      font-size: 22px;
+      font-weight: 400;
+    }
+
+    .btn-eq:hover {
+      background: #222222;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+    }
+
+    .btn-zero {
+      grid-column: span 2;
+      text-align: left;
+      padding-left: 26px;
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <div class="display">
+      <div class="expression" id="expression"></div>
+      <div class="result" id="result">0</div>
+    </div>
+    <div class="buttons">
+      <button class="btn-clear" onclick="clearAll()">AC</button>
+      <button class="btn-clear" onclick="deleteLast()">⌫</button>
+      <button class="btn-op"    onclick="inputOp('%')">%</button>
+      <button class="btn-op"    onclick="inputOp('/')">÷</button>
+
+      <button class="btn-num" onclick="inputNum('7')">7</button>
+      <button class="btn-num" onclick="inputNum('8')">8</button>
+      <button class="btn-num" onclick="inputNum('9')">9</button>
+      <button class="btn-op"  onclick="inputOp('*')">×</button>
+
+      <button class="btn-num" onclick="inputNum('4')">4</button>
+      <button class="btn-num" onclick="inputNum('5')">5</button>
+      <button class="btn-num" onclick="inputNum('6')">6</button>
+      <button class="btn-op"  onclick="inputOp('-')">−</button>
+
+      <button class="btn-num" onclick="inputNum('1')">1</button>
+      <button class="btn-num" onclick="inputNum('2')">2</button>
+      <button class="btn-num" onclick="inputNum('3')">3</button>
+      <button class="btn-op"  onclick="inputOp('+')">+</button>
+
+      <button class="btn-num btn-zero" onclick="inputNum('0')">0</button>
+      <button class="btn-num" onclick="inputDot()">.</button>
+      <button class="btn-eq"  onclick="calculate()">=</button>
+    </div>
+  </div>
+
+  <script>
+    let current = '';
+    let expression = '';
+    let justCalculated = false;
+
+    const resultEl = document.getElementById('result');
+    const expressionEl = document.getElementById('expression');
+    const displayOp = { '*': '×', '/': '÷', '+': '+', '-': '−', '%': '%' };
+
+    function updateDisplay() {
+      const val = current || '0';
+      resultEl.textContent = val;
+      resultEl.classList.toggle('small', val.length > 10);
+    }
+
+    function inputNum(n) {
+      if (justCalculated) { current = ''; expression = ''; justCalculated = false; }
+      if (current.length >= 15) return;
+      current += n;
+      updateDisplay();
+    }
+
+    function inputDot() {
+      if (justCalculated) { current = '0'; expression = ''; justCalculated = false; }
+      if (current.includes('.')) return;
+      if (!current) current = '0';
+      current += '.';
+      updateDisplay();
+    }
+
+    function inputOp(op) {
+      justCalculated = false;
+      if (current === '' && expression === '') return;
+
+      if (current !== '') {
+        expression += current + op;
+        current = '';
+      } else if (expression !== '') {
+        expression = expression.slice(0, -1) + op;
+      }
+
+      expressionEl.textContent = expression.replace(/[*/+\-%]/g, m => displayOp[m] || m);
+    }
+
+    function calculate() {
+      if (current === '' && expression === '') return;
+      const full = expression + current;
+      if (!full) return;
+
+      expressionEl.textContent = full.replace(/\*/g, '×').replace(/\//g, '÷').replace(/-/g, '−') + ' =';
+
+      try {
+        let res = Function('"use strict"; return (' + full + ')')();
+        if (!isFinite(res)) {
+          current = '오류';
+        } else {
+          res = parseFloat(res.toPrecision(12));
+          current = String(res);
+        }
+      } catch {
+        current = '오류';
+      }
+
+      expression = '';
+      justCalculated = true;
+      updateDisplay();
+    }
+
+    function clearAll() {
+      current = '';
+      expression = '';
+      justCalculated = false;
+      expressionEl.textContent = '';
+      updateDisplay();
+    }
+
+    function deleteLast() {
+      if (justCalculated) { clearAll(); return; }
+      current = current.slice(0, -1);
+      updateDisplay();
+    }
+
+    /* 리플 애니메이션 */
+    document.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        const ripple = document.createElement('span');
+        ripple.classList.add('ripple');
+        const rect = btn.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        ripple.style.cssText = `
+          width: ${size}px; height: ${size}px;
+          left: ${e.clientX - rect.left - size / 2}px;
+          top: ${e.clientY - rect.top - size / 2}px;
+        `;
+        btn.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 400);
+      });
+    });
+
+    /* 키보드 지원 */
+    document.addEventListener('keydown', e => {
+      if (e.key >= '0' && e.key <= '9') inputNum(e.key);
+      else if (e.key === '.') inputDot();
+      else if (e.key === '+') inputOp('+');
+      else if (e.key === '-') inputOp('-');
+      else if (e.key === '*') inputOp('*');
+      else if (e.key === '/') { e.preventDefault(); inputOp('/'); }
+      else if (e.key === '%') inputOp('%');
+      else if (e.key === 'Enter' || e.key === '=') calculate();
+      else if (e.key === 'Backspace') deleteLast();
+      else if (e.key === 'Escape') clearAll();
+    });
+  </script>
+</body>
+</html>

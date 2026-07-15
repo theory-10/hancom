@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>배민 스타일 계산기</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;800;900&family=Noto+Sans:wght@400;700&family=Gmarket+Sans:wght@400;700;900&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      /* 색상 토큰 (배달의민족 2.0) */
+      --mint-primary: oklch(0.88 0.18 178);      /* 히어로 민트 */
+      --mint-hover: oklch(0.69 0.13 184);         /* hover/pressed */
+      --mint-light: oklch(0.97 0.05 178);         /* 옅은 민트 */
+      --navy: oklch(0.30 0.13 286);               /* 딥 네이비 */
+      --navy-tint: oklch(0.94 0.04 287);          /* 네이비 라이트 */
+      --red: oklch(0.63 0.24 27);                 /* 강조 빨강 */
+      --bg-page: oklch(0.97 0.00 286);            /* 본화이트 */
+      --bg-surface: oklch(1.00 0 0);              /* 순백 */
+      --fg-1: oklch(0.18 0 0);                    /* near-black */
+      --fg-2: oklch(0.34 0 0);                    /* 보조 텍스트 */
+      --fg-3: oklch(0.55 0 0);                    /* 3차 텍스트 */
+      --border: oklch(0.94 0.00 286);             /* 보더 */
+
+      /* 스페이싱 */
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 40px;
+
+      /* 라운드 */
+      --rounded-md: 12px;
+      --rounded-lg: 16px;
+      --rounded-pill: 9999px;
+
+      /* 애니메이션 */
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --dur-fast: 120ms;
+      --dur-base: 200ms;
+    }
+
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: var(--bg-page);
+      color: var(--fg-1);
+      line-height: 1.5;
+      padding: var(--space-4);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .calculator {
+      width: 100%;
+      max-width: 360px;
+      background: var(--bg-surface);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-6);
+      box-shadow: 0 4px 12px oklch(0.18 0 0 / 0.06);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: var(--space-8);
+      position: relative;
+    }
+
+    .header-deco {
+      width: 32px;
+      height: 32px;
+      margin: 0 auto var(--space-3);
+    }
+
+    .header-title {
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--navy);
+      margin-bottom: var(--space-2);
+      letter-spacing: -0.02em;
+      font-family: 'Gmarket Sans', 'Noto Sans KR', sans-serif;
+    }
+
+    .header-subtitle {
+      font-size: 12px;
+      color: var(--fg-3);
+      letter-spacing: -0.01em;
+    }
+
+    .display {
+      background: linear-gradient(135deg, var(--mint-light) 0%, oklch(0.96 0.07 178) 100%);
+      border-radius: var(--rounded-md);
+      padding: var(--space-5);
+      text-align: right;
+      margin-bottom: var(--space-6);
+      min-height: 96px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: flex-end;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .display::before {
+      content: '';
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      width: 60px;
+      height: 60px;
+      background: var(--navy);
+      border-radius: 50%;
+      opacity: 0.04;
+      pointer-events: none;
+    }
+
+    .display-value {
+      font-size: 48px;
+      font-weight: 900;
+      color: var(--navy);
+      font-family: 'Gmarket Sans', 'Noto Sans KR', monospace;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.02em;
+      word-break: break-all;
+      line-height: 1.1;
+      position: relative;
+      z-index: 1;
+    }
+
+    .display-message {
+      font-size: 11px;
+      color: var(--fg-3);
+      margin-top: var(--space-2);
+      position: relative;
+      z-index: 1;
+      opacity: 0;
+      transition: opacity var(--dur-fast) var(--ease-out);
+    }
+
+    .display-message.show {
+      opacity: 1;
+    }
+
+    .display-value.error {
+      font-size: 32px;
+      color: var(--red);
+      font-weight: 700;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-3);
+      margin-bottom: var(--space-4);
+    }
+
+    button {
+      all: unset;
+      cursor: pointer;
+      padding: var(--space-4) var(--space-2);
+      border-radius: var(--rounded-pill);
+      font-size: 18px;
+      font-weight: 700;
+      text-align: center;
+      transition: all var(--dur-base) var(--ease-out);
+      font-family: 'Noto Sans KR', sans-serif;
+      user-select: none;
+      -webkit-user-select: none;
+      border: none;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-number {
+      background: var(--bg-page);
+      color: var(--fg-1);
+      border: 1px solid var(--border);
+    }
+
+    .btn-number:active {
+      background: var(--border);
+      transform: scale(0.98);
+    }
+
+    .btn-number:focus-visible {
+      outline: 2px solid var(--mint-primary);
+      outline-offset: 2px;
+    }
+
+    .btn-operator {
+      background: var(--navy-tint);
+      color: var(--navy);
+      font-weight: 800;
+    }
+
+    .btn-operator:active {
+      background: var(--navy);
+      color: var(--bg-surface);
+      transform: scale(0.98);
+    }
+
+    .btn-operator:focus-visible {
+      outline: 2px solid var(--navy);
+      outline-offset: 2px;
+    }
+
+    .btn-clear {
+      background: var(--red);
+      color: white;
+      grid-column: span 2;
+      font-weight: 800;
+    }
+
+    .btn-clear:active {
+      background: oklch(0.52 0.24 27);
+      transform: scale(0.98);
+    }
+
+    .btn-clear:focus-visible {
+      outline: 2px solid var(--red);
+      outline-offset: 2px;
+    }
+
+    .btn-equals {
+      background: var(--mint-primary);
+      color: white;
+      grid-column: span 2;
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .btn-equals:active {
+      background: var(--mint-hover);
+      transform: scale(0.98);
+    }
+
+    .btn-equals:focus-visible {
+      outline: 2px solid var(--mint-primary);
+      outline-offset: 2px;
+    }
+
+    @media (max-width: 480px) {
+      .calculator {
+        padding: var(--space-4);
+      }
+
+      .display-value {
+        font-size: 40px;
+      }
+
+      button {
+        height: 52px;
+        font-size: 16px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      button {
+        transition: none;
+      }
+
+      button:active {
+        transform: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <div class="header">
+      <svg class="header-deco" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--navy);">
+        <path d="M 6 8 L 26 8 M 8 16 L 24 16 M 10 24 L 22 24 M 16 4 L 16 28" stroke-dasharray="3" opacity="0.6"/>
+        <circle cx="8" cy="8" r="1.5" fill="var(--navy)"/>
+        <circle cx="24" cy="24" r="1.5" fill="var(--navy)"/>
+      </svg>
+      <div class="header-title">계산기</div>
+      <div class="header-subtitle">빠르고 정확하게</div>
+    </div>
+
+    <div class="display">
+      <div class="display-value" id="display">0</div>
+      <div class="display-message" id="displayMessage"></div>
+    </div>
+
+    <div class="buttons">
+      <button class="btn-clear" id="btnClear">C</button>
+      <button class="btn-operator" id="btnDelete">←</button>
+      <button class="btn-operator" id="btnDivide">÷</button>
+
+      <button class="btn-number" id="btn7">7</button>
+      <button class="btn-number" id="btn8">8</button>
+      <button class="btn-number" id="btn9">9</button>
+      <button class="btn-operator" id="btnMultiply">×</button>
+
+      <button class="btn-number" id="btn4">4</button>
+      <button class="btn-number" id="btn5">5</button>
+      <button class="btn-number" id="btn6">6</button>
+      <button class="btn-operator" id="btnMinus">−</button>
+
+      <button class="btn-number" id="btn1">1</button>
+      <button class="btn-number" id="btn2">2</button>
+      <button class="btn-number" id="btn3">3</button>
+      <button class="btn-operator" id="btnPlus">+</button>
+
+      <button class="btn-number" id="btn0" style="grid-column: span 2;">0</button>
+      <button class="btn-number" id="btnDecimal">.</button>
+
+      <button class="btn-equals" id="btnEquals">=</button>
+    </div>
+  </div>
+
+  <script>
+    class Calculator {
+      constructor() {
+        this.display = document.getElementById('display');
+        this.displayMessage = document.getElementById('displayMessage');
+        this.currentValue = '';
+        this.previousValue = '';
+        this.operation = null;
+        this.shouldResetDisplay = false;
+        this.messageTimeout = null;
+        this.setupEventListeners();
+      }
+
+      setupEventListeners() {
+        // 숫자 버튼
+        for (let i = 0; i <= 9; i++) {
+          document.getElementById(`btn${i}`).addEventListener('click', () => this.inputNumber(i));
+        }
+
+        // 연산자
+        document.getElementById('btnPlus').addEventListener('click', () => this.setOperation('+'));
+        document.getElementById('btnMinus').addEventListener('click', () => this.setOperation('−'));
+        document.getElementById('btnMultiply').addEventListener('click', () => this.setOperation('×'));
+        document.getElementById('btnDivide').addEventListener('click', () => this.setOperation('÷'));
+
+        // 기능 버튼
+        document.getElementById('btnDecimal').addEventListener('click', () => this.inputDecimal());
+        document.getElementById('btnEquals').addEventListener('click', () => this.calculate());
+        document.getElementById('btnClear').addEventListener('click', () => this.clear());
+        document.getElementById('btnDelete').addEventListener('click', () => this.delete());
+
+        // 키보드 지원
+        document.addEventListener('keydown', (e) => this.handleKeyboard(e));
+      }
+
+      inputNumber(num) {
+        if (this.shouldResetDisplay) {
+          this.currentValue = String(num);
+          this.shouldResetDisplay = false;
+        } else {
+          this.currentValue += String(num);
+        }
+        this.updateDisplay();
+      }
+
+      inputDecimal() {
+        if (this.shouldResetDisplay) {
+          this.currentValue = '0.';
+          this.shouldResetDisplay = false;
+        } else if (!this.currentValue.includes('.')) {
+          this.currentValue += '.';
+        }
+        this.updateDisplay();
+      }
+
+      setOperation(op) {
+        if (this.currentValue === '') return;
+
+        if (this.previousValue !== '') {
+          this.calculate();
+        }
+
+        this.operation = op;
+        this.previousValue = this.currentValue;
+        this.currentValue = '';
+        this.shouldResetDisplay = true;
+      }
+
+      calculate() {
+        if (!this.operation || this.currentValue === '' || this.previousValue === '') {
+          return;
+        }
+
+        const prev = parseFloat(this.previousValue);
+        const current = parseFloat(this.currentValue);
+        let result;
+
+        switch (this.operation) {
+          case '+':
+            result = prev + current;
+            break;
+          case '−':
+            result = prev - current;
+            break;
+          case '×':
+            result = prev * current;
+            break;
+          case '÷':
+            result = current === 0 ? NaN : prev / current;
+            break;
+          default:
+            return;
+        }
+
+        this.currentValue = String(result);
+        this.previousValue = '';
+        this.operation = null;
+        this.shouldResetDisplay = true;
+
+        // 결과 메시지
+        if (!isNaN(result)) {
+          this.displayMessage.textContent = '계산 완료!';
+        }
+
+        this.updateDisplay();
+      }
+
+      delete() {
+        if (this.shouldResetDisplay) return;
+        this.currentValue = this.currentValue.slice(0, -1);
+        this.updateDisplay();
+      }
+
+      clear() {
+        this.currentValue = '';
+        this.previousValue = '';
+        this.operation = null;
+        this.shouldResetDisplay = false;
+        this.updateDisplay();
+      }
+
+      updateDisplay() {
+        const value = this.currentValue || this.previousValue || '0';
+
+        if (isNaN(parseFloat(value))) {
+          this.display.textContent = '뭔가 이상한데?';
+          this.display.classList.add('error');
+          this.displayMessage.textContent = '다시 해봐요.';
+          this.showMessage();
+        } else {
+          this.display.classList.remove('error');
+          // 숫자 포맷팅: 너무 길면 과학 표기법 사용
+          if (value.length > 12) {
+            this.display.textContent = parseFloat(value).toExponential(5);
+          } else {
+            this.display.textContent = value;
+          }
+          this.displayMessage.textContent = '';
+          this.hideMessage();
+        }
+      }
+
+      showMessage() {
+        clearTimeout(this.messageTimeout);
+        this.displayMessage.classList.add('show');
+      }
+
+      hideMessage() {
+        clearTimeout(this.messageTimeout);
+        this.messageTimeout = setTimeout(() => {
+          this.displayMessage.classList.remove('show');
+        }, 2000);
+      }
+
+      handleKeyboard(e) {
+        if (e.key >= '0' && e.key <= '9') this.inputNumber(parseInt(e.key));
+        else if (e.key === '.') this.inputDecimal();
+        else if (e.key === '+') this.setOperation('+');
+        else if (e.key === '-') this.setOperation('−');
+        else if (e.key === '*') this.setOperation('×');
+        else if (e.key === '/') { e.preventDefault(); this.setOperation('÷'); }
+        else if (e.key === 'Enter' || e.key === '=') { e.preventDefault(); this.calculate(); }
+        else if (e.key === 'Backspace') this.delete();
+        else if (e.key === 'Escape') this.clear();
+      }
+    }
+
+    new Calculator();
+  </script>
+</body>
+</html>

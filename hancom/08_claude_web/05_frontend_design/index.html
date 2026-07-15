@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CALCULATOR</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      /* SpaceX Design Tokens */
+      --canvas-night: #000000;
+      --canvas-night-soft: #0a0a0a;
+      --on-primary: #ffffff;
+      --on-primary-mute: #f0f0fa;
+      --hairline-on-dark: #3a3a3f;
+
+      /* Spacing */
+      --space-xs: 8px;
+      --space-sm: 12px;
+      --space-md: 16px;
+      --space-lg: 18px;
+      --space-xl: 24px;
+      --space-xxl: 32px;
+
+      /* Rounded */
+      --rounded-xs: 4px;
+      --rounded-sm: 8px;
+      --rounded-pill: 32px;
+
+      /* Animation */
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --dur-base: 200ms;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: var(--canvas-night);
+      color: var(--on-primary);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-md);
+    }
+
+    .calculator {
+      width: 100%;
+      max-width: 360px;
+      background: var(--canvas-night-soft);
+      border: 1px solid var(--hairline-on-dark);
+      border-radius: var(--rounded-sm);
+      padding: var(--space-xxl);
+      text-align: center;
+    }
+
+    .header {
+      margin-bottom: var(--space-xxl);
+      text-transform: uppercase;
+      letter-spacing: 1.6px;
+      font-weight: 700;
+      line-height: 0.95;
+    }
+
+    .header-eyebrow {
+      font-size: 12px;
+      color: var(--on-primary-mute);
+      letter-spacing: 0.96px;
+      font-weight: 400;
+      line-height: 2.0;
+      margin-bottom: var(--space-md);
+    }
+
+    .header-title {
+      font-size: 64px;
+      margin-bottom: var(--space-md);
+    }
+
+    .display {
+      background: var(--canvas-night);
+      border: 1px solid var(--hairline-on-dark);
+      border-radius: var(--rounded-xs);
+      padding: var(--space-lg) var(--space-md);
+      margin-bottom: var(--space-xxl);
+      min-height: 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: flex-end;
+      font-family: 'Courier New', monospace;
+    }
+
+    .display-value {
+      font-size: 48px;
+      font-weight: 700;
+      color: var(--on-primary);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      word-break: break-all;
+    }
+
+    .display-value.error {
+      font-size: 32px;
+      color: var(--on-primary-mute);
+    }
+
+    .display-message {
+      font-size: 11px;
+      color: var(--on-primary-mute);
+      margin-top: var(--space-xs);
+      letter-spacing: 0.96px;
+      text-transform: uppercase;
+      font-weight: 400;
+      opacity: 0;
+      transition: opacity var(--dur-base) var(--ease-out);
+    }
+
+    .display-message.show {
+      opacity: 1;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-sm);
+      margin-bottom: var(--space-xl);
+    }
+
+    button {
+      all: unset;
+      cursor: pointer;
+      padding: var(--space-lg) var(--space-md);
+      border: 1px solid var(--on-primary);
+      border-radius: var(--rounded-xs);
+      font-size: 16px;
+      font-weight: 700;
+      text-align: center;
+      transition: all var(--dur-base) var(--ease-out);
+      font-family: 'Inter', sans-serif;
+      user-select: none;
+      -webkit-user-select: none;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-transform: uppercase;
+      letter-spacing: 1.17px;
+      color: var(--on-primary);
+      background: transparent;
+    }
+
+    button:hover {
+      background: var(--on-primary);
+      color: var(--canvas-night);
+      border-color: var(--on-primary);
+    }
+
+    button:active {
+      opacity: 0.7;
+    }
+
+    button:focus-visible {
+      outline: 2px solid var(--on-primary);
+      outline-offset: -1px;
+    }
+
+    .btn-equals {
+      grid-column: span 2;
+      border-radius: var(--rounded-pill);
+      letter-spacing: 0.96px;
+      font-size: 14px;
+    }
+
+    .btn-clear {
+      grid-column: span 2;
+      border-radius: var(--rounded-pill);
+      letter-spacing: 0.96px;
+      font-size: 14px;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: var(--space-xl);
+      }
+
+      .header-title {
+        font-size: 48px;
+      }
+
+      .display-value {
+        font-size: 36px;
+      }
+
+      button {
+        height: 48px;
+        font-size: 14px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .header-title {
+        font-size: 40px;
+      }
+
+      .display {
+        min-height: 64px;
+      }
+
+      .display-value {
+        font-size: 32px;
+      }
+
+      button {
+        height: 44px;
+        font-size: 12px;
+        padding: 12px 8px;
+      }
+
+      .buttons {
+        gap: 8px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      button, .display-message {
+        transition: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <div class="header">
+      <div class="header-eyebrow">SPASEX</div>
+      <div class="header-title">CALC</div>
+    </div>
+
+    <div class="display">
+      <div class="display-value" id="display">0</div>
+      <div class="display-message" id="displayMessage"></div>
+    </div>
+
+    <div class="buttons">
+      <button class="btn-clear" id="btnClear">C</button>
+      <button id="btnDelete">←</button>
+      <button id="btnDivide">÷</button>
+
+      <button id="btn7">7</button>
+      <button id="btn8">8</button>
+      <button id="btn9">9</button>
+      <button id="btnMultiply">×</button>
+
+      <button id="btn4">4</button>
+      <button id="btn5">5</button>
+      <button id="btn6">6</button>
+      <button id="btnMinus">−</button>
+
+      <button id="btn1">1</button>
+      <button id="btn2">2</button>
+      <button id="btn3">3</button>
+      <button id="btnPlus">+</button>
+
+      <button id="btn0" style="grid-column: span 2;">0</button>
+      <button id="btnDecimal">.</button>
+
+      <button class="btn-equals" id="btnEquals">=</button>
+    </div>
+  </div>
+
+  <script>
+    class Calculator {
+      constructor() {
+        this.display = document.getElementById('display');
+        this.displayMessage = document.getElementById('displayMessage');
+        this.currentValue = '';
+        this.previousValue = '';
+        this.operation = null;
+        this.shouldResetDisplay = false;
+        this.messageTimeout = null;
+        this.setupEventListeners();
+      }
+
+      setupEventListeners() {
+        for (let i = 0; i <= 9; i++) {
+          document.getElementById(`btn${i}`).addEventListener('click', () => this.inputNumber(i));
+        }
+
+        document.getElementById('btnPlus').addEventListener('click', () => this.setOperation('+'));
+        document.getElementById('btnMinus').addEventListener('click', () => this.setOperation('−'));
+        document.getElementById('btnMultiply').addEventListener('click', () => this.setOperation('×'));
+        document.getElementById('btnDivide').addEventListener('click', () => this.setOperation('÷'));
+
+        document.getElementById('btnDecimal').addEventListener('click', () => this.inputDecimal());
+        document.getElementById('btnEquals').addEventListener('click', () => this.calculate());
+        document.getElementById('btnClear').addEventListener('click', () => this.clear());
+        document.getElementById('btnDelete').addEventListener('click', () => this.delete());
+
+        document.addEventListener('keydown', (e) => this.handleKeyboard(e));
+      }
+
+      inputNumber(num) {
+        if (this.shouldResetDisplay) {
+          this.currentValue = String(num);
+          this.shouldResetDisplay = false;
+        } else {
+          this.currentValue += String(num);
+        }
+        this.updateDisplay();
+      }
+
+      inputDecimal() {
+        if (this.shouldResetDisplay) {
+          this.currentValue = '0.';
+          this.shouldResetDisplay = false;
+        } else if (!this.currentValue.includes('.')) {
+          this.currentValue += '.';
+        }
+        this.updateDisplay();
+      }
+
+      setOperation(op) {
+        if (this.currentValue === '') return;
+
+        if (this.previousValue !== '') {
+          this.calculate();
+        }
+
+        this.operation = op;
+        this.previousValue = this.currentValue;
+        this.currentValue = '';
+        this.shouldResetDisplay = true;
+      }
+
+      calculate() {
+        if (!this.operation || this.currentValue === '' || this.previousValue === '') {
+          return;
+        }
+
+        const prev = parseFloat(this.previousValue);
+        const current = parseFloat(this.currentValue);
+        let result;
+
+        switch (this.operation) {
+          case '+':
+            result = prev + current;
+            break;
+          case '−':
+            result = prev - current;
+            break;
+          case '×':
+            result = prev * current;
+            break;
+          case '÷':
+            result = current === 0 ? NaN : prev / current;
+            break;
+          default:
+            return;
+        }
+
+        this.currentValue = String(result);
+        this.previousValue = '';
+        this.operation = null;
+        this.shouldResetDisplay = true;
+
+        if (!isNaN(result)) {
+          this.displayMessage.textContent = 'RESULT';
+        }
+
+        this.updateDisplay();
+      }
+
+      delete() {
+        if (this.shouldResetDisplay) return;
+        this.currentValue = this.currentValue.slice(0, -1);
+        this.updateDisplay();
+      }
+
+      clear() {
+        this.currentValue = '';
+        this.previousValue = '';
+        this.operation = null;
+        this.shouldResetDisplay = false;
+        this.updateDisplay();
+      }
+
+      updateDisplay() {
+        const value = this.currentValue || this.previousValue || '0';
+
+        if (isNaN(parseFloat(value))) {
+          this.display.textContent = 'ERROR';
+          this.display.classList.add('error');
+          this.displayMessage.textContent = 'INVALID INPUT';
+          this.showMessage();
+        } else {
+          this.display.classList.remove('error');
+          if (value.length > 12) {
+            this.display.textContent = parseFloat(value).toExponential(5);
+          } else {
+            this.display.textContent = value;
+          }
+          this.displayMessage.textContent = '';
+          this.hideMessage();
+        }
+      }
+
+      showMessage() {
+        clearTimeout(this.messageTimeout);
+        this.displayMessage.classList.add('show');
+      }
+
+      hideMessage() {
+        clearTimeout(this.messageTimeout);
+        this.messageTimeout = setTimeout(() => {
+          this.displayMessage.classList.remove('show');
+        }, 2500);
+      }
+
+      handleKeyboard(e) {
+        if (e.key >= '0' && e.key <= '9') this.inputNumber(parseInt(e.key));
+        else if (e.key === '.') this.inputDecimal();
+        else if (e.key === '+') this.setOperation('+');
+        else if (e.key === '-') this.setOperation('−');
+        else if (e.key === '*') this.setOperation('×');
+        else if (e.key === '/') { e.preventDefault(); this.setOperation('÷'); }
+        else if (e.key === 'Enter' || e.key === '=') { e.preventDefault(); this.calculate(); }
+        else if (e.key === 'Backspace') this.delete();
+        else if (e.key === 'Escape') this.clear();
+      }
+    }
+
+    new Calculator();
+  </script>
+</body>
+</html>
