@@ -18,6 +18,11 @@ def decorate_text(text):
     return pyfiglet.figlet_format(text)
 print(decorate_text("how"))
 
+# | |__   _____      __
+# | '_ \ / _ \ \ /\ / /
+# | | | | (_) \ V  V / 
+# |_| |_|\___/ \_/\_/ 
+
 # decorate_text = lambda text: pyfiglet.figlet_format(text)
 # py_text = decorate_text("HI")
 # print(py_text) 
