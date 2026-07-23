@@ -3,6 +3,7 @@ node_modules/
 package-lock.json
 __pycache__/
 
+13_YOLO/basic/*.pt
 13_YOLO/advanced/*.pt
 13_YOLO/advanced/*.zip
 13_YOLO/advanced/*.npy
