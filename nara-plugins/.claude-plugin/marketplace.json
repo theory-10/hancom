@@ -1,0 +1,18 @@
+{
+  "name": "nara-plugins",
+  "owner": {
+    "name": "nara"
+  },
+  "description": "nara's Claude Code / Cowork plugin marketplace",
+  "plugins": [
+    {
+      "name": "learning-journal",
+      "source": "./plugins/learning-journal",
+      "description": "웹개발을 공부하는 초보자를 위해 세션 중 겪은 에러와 배운 점을 자동으로 정리해 마크다운 학습 일지에 기록하는 플러그인",
+      "version": "0.1.0",
+      "author": {
+        "name": "nara"
+      }
+    }
+  ]
+}
